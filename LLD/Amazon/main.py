@@ -1,5 +1,6 @@
 #!/bin/env python
 import sys
+from tracemalloc import start
 from typing import Dict, List
 from enum import Enum, auto
 # category
@@ -38,6 +39,11 @@ class User:
             raise Exception(f'product name: {product_name} not in shoppingcart')
         self._shoppingcart[product_name] = count
 
+class Review:
+    def __init__(self, stars: int, msg: str):
+        self.stars = start # 1,2,3,4,5
+        self.msg = msg
+
 # product
 product_id = 0
 class Product:
@@ -48,12 +54,16 @@ class Product:
         self._catetory = catetory
         self._seller = seller
         self._count = count
+        self._reviews: Dict[str, Review]  # key: user name, value: Review
     
     def decrease_count(self, count: int):
         if self._count - count < 0:
             raise Exception("count can't not be minus")
         
         self._count -= count
+    
+    def add_review(self, user_name: str, review: Review):
+        self._reviews[user_name] = review
 
 # system
 class Amazon:
@@ -93,6 +103,11 @@ class Amazon:
         
         for product_name in user._shoppingcart:
             self.buy_product_by_name(product_name, user)
+        
+    def add_review(self, product_name: str, user: User, review: Review):
+        product = self.search_product_by_name(product_name)
+        product.add_review(user._name, review)
+        
 
 def main(argv):
     print('hello world!')

@@ -7,7 +7,7 @@
 * ~~User can search and view but, only registered member can buy product.~~
 * ~~User can add/remove/modify in shopping cart~~
 * ~~User can checkout and buy items shopping cart~~
-* User can rate, review for product
+* ~~User can rate, review for product~~
 * User can can specify their shipping address
 * User can cancle an order if not shipped
 * User can be informed when shipping status changes
