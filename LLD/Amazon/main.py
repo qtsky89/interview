@@ -1,35 +1,48 @@
 #!/bin/env python
 import sys
-from typing import Dict
-from enum import Enum
+from typing import Dict, List
+from enum import Enum, auto
 # category
-class Category:
-    BOOK, CAMERA, COMPUTER = 1, 2, 3
+class Category(Enum):
+    BOOK = 1
+    CAMERA = auto()
+    COMPUTER = auto()
 
 # user
 user_id = 0
 class User:
-    def __init__(self, name, address):
+    def __init__(self, name: str, address: str, is_member: bool):
         user_id += 1
         self._id = user_id
         self._name = name
         self._address = address
+        self._is_member = is_member
+    
+    def is_member(self) -> bool:
+        return self._is_member
 
 # product
 product_id = 0
 class Product:
-    def __init__(self, name: str, catetory: Category, seller: User):
+    def __init__(self, name: str, catetory: Category, seller: User, count: int):
         product_id += 1
         self._product_id = product_id
         self._name = name
         self._catetory = catetory
         self._seller = seller
+        self._count = count
+    
+    def decrease_count(self, count: int):
+        if self._count - count < 0:
+            raise Exception("count can't not be minus")
+        
+        self._count -= count
 
 # system
 class Amazon:
     def __init__(self):
         self._products_by_name: Dict[str, Product] = {}
-        self._products_by_category: Dict[Category, Product] = {}
+        self._products_by_category: Dict[Category, List[Product]] = {}
 
     def add_new_product_to_sell(self, name: str, category: Category, seller: User):
         new_product = Product(name, category, seller)
@@ -43,12 +56,21 @@ class Amazon:
         
         return self._products_by_name[name]
     
-    def search_product_by_category(self, category: Category) -> Product:
+    def search_product_by_category(self, category: Category) -> List[Product]:
         if category not in self._products_by_category:
             return None
         
         return self._products_by_category[category]
 
+    def buy_product_by_name(self, name: str, user: User):
+        if not user.is_member():
+            raise Exception('user is not member')
+        
+        product = self.search_product_by_name(name)
+        if not product:
+            raise Exception(f'can not search product by name: {name}')
+        
+        product.decrease_count(1)
 
 def main(argv):
     print('hello world!')
