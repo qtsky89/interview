@@ -8,7 +8,7 @@
 * ~~User can add/remove/modify in shopping cart~~
 * ~~User can checkout and buy items shopping cart~~
 * ~~User can rate, review for product~~
-* User can can specify their shipping address
+* ~~User can can specify their shipping address~~
 * User can cancle an order if not shipped
 * User can be informed when shipping status changes
 * User can pay using credit cart or electoronic bank transfer

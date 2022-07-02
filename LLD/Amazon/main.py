@@ -1,7 +1,7 @@
 #!/bin/env python
 import sys
 from tracemalloc import start
-from typing import Dict, List
+from typing import Deque, Dict, List
 from enum import Enum, auto
 # category
 class Category(Enum):
@@ -65,11 +65,29 @@ class Product:
     def add_review(self, user_name: str, review: Review):
         self._reviews[user_name] = review
 
+class ShippingStatus(Enum):
+    Prepare = 1
+    Shipping = auto()
+    Delivered = auto()
+
+order_id = 0
+class Order:
+    def __init__(self, status: ShippingStatus, order_date: str, shipping_address: str, product_name_and_count: Dict[str, int]):
+        order_id += 1
+        self.order_id = order_id
+        self.status = status
+        self.order_date = order_date
+        self.shipping_address = shipping_address
+        self.product_name_and_count = product_name_and_count
+
+from collections import deque
 # system
 class Amazon:
     def __init__(self):
         self._products_by_name: Dict[str, Product] = {}
         self._products_by_category: Dict[Category, List[Product]] = {}
+        self._orders: Deque[Order]
+        self._delevered_order: Deque[Order]
 
     def add_new_product_to_sell(self, new_product: Product):
         self._products_by_name[new_product._name] = new_product
@@ -87,7 +105,7 @@ class Amazon:
         
         return self._products_by_category[category]
 
-    def buy_product_by_name(self, name: str, user: User):
+    def buy_product_by_name(self, name: str, user: User, date: str, shipping_address: str):
         if not user.is_member:
             raise Exception(f'user {user} is not member')
 
@@ -95,8 +113,30 @@ class Amazon:
         if not product:
             raise Exception(f'can not search product by name: {name}')
 
-        product.decrease_count(1)
+        order = Order(ShippingStatus.Prepare, date, shipping_address, {name: 1})
+        self._orders.append(order)
+    
+    def handler_order(self):
+        tmp = deque()
+        while self._orders:
+            order = self._orders.popleft()
+    
+            if order.status == ShippingStatus.Prepare:
+                for name, count in self.product_name_and_count:
+                    # self._products_by_category[]
+                    if self._products_by_name[name]._count < count:
+                        raise Exception('out of stock!')
+                    self._products_by_name[name]._count -= count
+            elif order.status == ShippingStatus.Shipping:
+                order.status = ShippingStatus.Delivered
+                self._delevered_order.append(order)
+                continue
 
+            tmp.append(order)
+        
+        while tmp:
+            self._orders.append(tmp.popleft())
+        
     def buy_items_in_shopping_cart(self, user: User):
         if not user.is_member():
             raise Exception(f'user {user} is not member')
