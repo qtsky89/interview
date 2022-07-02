@@ -61,11 +61,9 @@ class Amazon:
         self._products_by_name: Dict[str, Product] = {}
         self._products_by_category: Dict[Category, List[Product]] = {}
 
-    def add_new_product_to_sell(self, name: str, category: Category, seller: User):
-        new_product = Product(name, category, seller)
-
-        self._products_by_name[name] = new_product
-        self._products_by_category[name] = new_product
+    def add_new_product_to_sell(self, new_product: Product):
+        self._products_by_name[new_product._name] = new_product
+        self._products_by_category[new_product._catetory] = new_product
     
     def search_product_by_name(self, name: str) -> Product:
         if name not in self._products_by_name:
@@ -80,14 +78,21 @@ class Amazon:
         return self._products_by_category[category]
 
     def buy_product_by_name(self, name: str, user: User):
-        if not user.is_member():
-            raise Exception('user is not member')
-        
+        if not user.is_member:
+            raise Exception(f'user {user} is not member')
+
         product = self.search_product_by_name(name)
         if not product:
             raise Exception(f'can not search product by name: {name}')
-        
+
         product.decrease_count(1)
+
+    def buy_items_in_shopping_cart(self, user: User):
+        if not user.is_member():
+            raise Exception(f'user {user} is not member')
+        
+        for product_name in user._shoppingcart:
+            self.buy_product_by_name(product_name, user)
 
 def main(argv):
     print('hello world!')

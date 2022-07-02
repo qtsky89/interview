@@ -5,8 +5,8 @@
 * ~~User can add new product to sell~~
 * ~~User can search product by name or category~~
 * ~~User can search and view but, only registered member can buy product.~~
-* User can add/remove/modify in shopping cart
-* User can checkout and but in shopping cart
+* ~~User can add/remove/modify in shopping cart~~
+* ~~User can checkout and buy items shopping cart~~
 * User can rate, review for product
 * User can can specify their shipping address
 * User can cancle an order if not shipped
