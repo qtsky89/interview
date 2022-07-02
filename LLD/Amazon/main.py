@@ -17,9 +17,26 @@ class User:
         self._name = name
         self._address = address
         self._is_member = is_member
+        self._shoppingcart: Dict[str, int] = {}
     
     def is_member(self) -> bool:
         return self._is_member
+
+    def add_product_shopping_cart(self, product_name: str, count: int):
+        if product_name in self._shoppingcart:
+            raise Exception(f'product name: {product_name} is already in shopping cart')
+        self._shoppingcart[product_name] = count
+    
+    def remove_product_shopping_cart(self, product_name: str):
+        if product_name not in self._shoppingcart:
+            raise Exception(f'product name: {product_name} not in shoppingcart')
+        
+        del self._shoppingcart[product_name]
+    
+    def modify_product_shopping_cart(self, product_name, count):
+        if product_name not in self._shoppingcart:
+            raise Exception(f'product name: {product_name} not in shoppingcart')
+        self._shoppingcart[product_name] = count
 
 # product
 product_id = 0
